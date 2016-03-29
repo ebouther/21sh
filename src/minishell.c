@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/03/29 22:44:45 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/03/29 22:48:17 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,9 +94,10 @@ static void	ft_find_and_exec_bin(char **input, char **env)
 	int		i;
 	int		n;
 
-	if ((i = ft_get_in_env("PATH=", env)) != -1)
+	
+	if (execve(input[0], input, NULL) == -1
+		&& (i = ft_get_in_env("PATH=", env)) != -1)
 	{
-		//Should check before if the path doesn't already exists
 		split = ft_strsplit(env[i], ':');
 		i = 0;
 		while (split[i] != '\0')
