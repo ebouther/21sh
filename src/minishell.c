@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/03/29 22:38:21 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/03/29 22:44:45 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ static void	ft_change_directory(char **arg)
 	while (arg[++i])
 		;
 	getcwd(directory, sizeof(directory));
-	ft_printf("CURRENT DIR : '%s'\n", directory);
 	if (i > 2)
 	{
 		ft_printf("TOO BIG\n");
@@ -43,11 +42,9 @@ static void	ft_change_directory(char **arg)
 	{
 		if (access(arg[1], R_OK) == 0)
 		{
-			ft_printf("HERE WE GO\n");
 			if (chdir((const char *)arg[1]) == -1)
 				ft_printf("CHDIR Error\n");
 			getcwd(directory, sizeof(directory));
-			ft_printf("CURRENT DIR : '%s'\n", directory);
 		}
 	}
 	else
@@ -82,6 +79,8 @@ static char	**ft_get_user_input(void)
 			i = 0;
 			while (arg[i])
 				ft_strdel(arg + i++);
+			free((void *)arg);
+			arg = NULL;
 		}
 		ft_strdel(&str);
 	}
