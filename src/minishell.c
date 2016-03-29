@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/03/29 18:38:51 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/03/29 19:02:25 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,40 @@ static int	ft_get_in_env(char *search, char **env)
 	return (-1);
 }
 
+
+// Should be done in father process
+static void	ft_change_directory(char **arg)
+{
+	int	i;
+	char directory[1024];
+
+	i = -1;
+	while (arg[++i])
+		;
+
+	getcwd(directory, sizeof(directory));
+	ft_printf("CURRENT DIR : '%s'\n", directory);
+	if (i > 2)
+	{
+		ft_printf("TOO BIG\n");
+	}
+	else if (i > 1)
+	{
+		if (access(arg[1], R_OK) == 0)
+		{
+			ft_printf("HERE WE GO\n");
+			if (chdir((const char *)arg[1]) == -1)
+				ft_printf("CHDIR Error\n");
+			getcwd(directory, sizeof(directory));
+			ft_printf("CURRENT DIR : '%s'\n", directory);
+		}
+	}
+	else
+	{
+	 //(test if  ~ / - / no arg)
+	}
+}
+
 static char	**ft_get_user_input(pid_t pid)
 {
 	char	**arg;
@@ -35,18 +69,16 @@ static char	**ft_get_user_input(pid_t pid)
 	{
 		if (ft_strlen((char *)(arg = ft_strsplit(str, ' '))) > 0)
 		{
-			/*if (ft_strcmp(arg[0], "exit") == 0)
+			if (ft_strcmp(arg[0], "exit") == 0)
 			{
-				kill(pid, 0);
-			}*/
+				kill(pid, SIGQUIT);
+			}
 			else if (ft_strcmp(arg[0], "cd") == 0)
 			{
-				ft_printf("CD\n");
+				ft_change_directory(arg);
 			}
 			else if (ft_strcmp(arg[0], "clear") == 0)
-			{
 				ft_printf("\033[2J\033[1;1H");
-			}
 			else
 				return (arg);
 		}
@@ -86,12 +118,13 @@ static void	ft_find_and_exec_bin(char **input, char **env)
 
 int	main(int ac, char **av, char **env)
 {
-	pid_t	pid = 0;
+	pid_t	pid;
 	char	**input;
 
 	(void)ac;
 	(void)av;
 
+	ft_printf("Goes there\n");
 	while (42)
 	{
 		pid = fork();
