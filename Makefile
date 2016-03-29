@@ -1,4 +1,4 @@
-NAME := rtv1
+NAME := minishell
 
 RED_L = \033[1;31m
 GREEN_L = \033[1;32m
@@ -14,7 +14,7 @@ NC = \033[0m
 
 CC = gcc 
 CFLAGS = -Wall -Wextra -Werror
-LFLAGS = -L./minilibx_macos_elcapitan -lmlx  -framework OpenGL -framework AppKit -L./libft -lft 
+LFLAGS = -L./libft -lft 
 IFLAGS = -I./inc/ -I./libft/includes/ -I./minilibx_macos_elcapitan 
 
 LIBFT = libft/libft.a
@@ -26,7 +26,7 @@ OBJ_DIR = ./obj/
 SRC_FILES =	minishell.c
 
 OBJ_FILES = $(SRC_FILES:.c=.o)
-INC_FILES = rtv1.h objects.h draw.h trace.h parser.h
+INC_FILES = minishell.h
 
 SRC = $(addprefix $(SRC_DIR), $(SRC_FILES))
 OBJ = $(addprefix $(OBJ_DIR), $(OBJ_FILES))
