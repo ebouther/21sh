@@ -13,7 +13,7 @@ CYAN_L = \033[1;36m
 NC = \033[0m
 
 CC = gcc 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror        -g #REMOVE -g
 LFLAGS = -L./libft -lft
 IFLAGS = -I./inc/ -I./libft/includes/ -I./minilibx_macos_elcapitan 
 
