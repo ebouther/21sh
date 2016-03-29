@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/03/29 14:27:09 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/03/29 18:38:51 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,20 @@ static char	**ft_get_user_input(pid_t pid)
 	{
 		if (ft_strlen((char *)(arg = ft_strsplit(str, ' '))) > 0)
 		{
-			if (ft_strcmp(arg[0], "exit") == 0)
+			/*if (ft_strcmp(arg[0], "exit") == 0)
 			{
-				kill(pid, SIGKILL);
-			}
+				kill(pid, 0);
+			}*/
 			else if (ft_strcmp(arg[0], "cd") == 0)
 			{
 				ft_printf("CD\n");
 			}
-			return (arg);
+			else if (ft_strcmp(arg[0], "clear") == 0)
+			{
+				ft_printf("\033[2J\033[1;1H");
+			}
+			else
+				return (arg);
 		}
 	}
 	return (NULL);
@@ -54,22 +59,34 @@ static void	ft_find_and_exec_bin(char **input, char **env)
 	char	*path;
 	char	**split;
 	int		i;
+	int		n;
 
 	if ((i = ft_get_in_env("PATH=", env)) != -1)
 	{
+		//Should check before if the path doesn't already exists
 		split = ft_strsplit(env[i], ':');
 		while (*split != '\0')
 		{
 			if (access(path = ft_strjoin(*split, ft_strjoin("/", input[0])), X_OK) == 0)
-				execve(path, ft_strlen((char *)input) > 1 ? input : NULL, NULL);
+			{
+				if (execve(path, input, NULL) == -1)
+					ft_printf("EXECVE ERROR.\n");
+				return ;
+			}
 			split++;
 		}
+		n = 0;
+		ft_printf("minishell: command not found:");
+		while (input[n])
+			ft_printf(" %s", input[n++]);
+		ft_putchar('\n');
+		exit(-1);
 	}
 }
 
 int	main(int ac, char **av, char **env)
 {
-	pid_t	pid;
+	pid_t	pid = 0;
 	char	**input;
 
 	(void)ac;
@@ -78,13 +95,15 @@ int	main(int ac, char **av, char **env)
 	while (42)
 	{
 		pid = fork();
-		if (pid == 0)
+		if (pid == 0) //father process
 		{
 			ft_printf("$> ");
 			if ((input = ft_get_user_input(pid)) != NULL)
 				ft_find_and_exec_bin(input, env);
+			else
+				exit(0);
 		}
-		else if (pid > 0)
+		else if (pid > 0) //child process
 			wait(NULL);
 		else
 		{
