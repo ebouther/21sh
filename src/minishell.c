@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/03/30 23:02:38 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/03/30 23:19:21 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ static void	ft_unset_env(char **arg, char ***env, int *modified)
 	char	*tmp;
 
 	if ((pos = ft_get_in_env(tmp = ft_strjoin_free(ft_strdup(arg[1]),
-				ft_strdup("=")), *env)) != -1)
+						ft_strdup("=")), *env)) != -1)
 	{
 		len = 0;
 		while ((*env)[len])
@@ -130,7 +130,7 @@ static void	ft_modify_env(char **arg, char ***env, int mode)
 
 static void	ft_open_dir(char *dir, char ***env)
 {
-	char **arg;
+	char	**arg;
 	int		i;
 	char	cwd[1024];
 
@@ -264,11 +264,9 @@ static void	ft_find_and_exec_bin(char **input, char ***env)
 	int		i;
 	int		n;
 
-	ft_printf("1) Exec: '%s'\n", input[0]);	
 	if (execve(input[0], input, NULL) == -1
-		&& (i = ft_get_in_env("PATH=", *env)) != -1)
+			&& (i = ft_get_in_env("PATH=", *env)) != -1)
 	{
-		ft_printf("Goes there\n");
 		split = ft_strsplit((*env)[i], ':');
 		i = 0;
 		while (split[i] != '\0')
@@ -286,15 +284,6 @@ static void	ft_find_and_exec_bin(char **input, char ***env)
 			ft_strdel(&path);
 			i++;
 		}
-		n = 0;
-		ft_printf("minishell: command not found:");
-		while (input[n])
-			ft_printf(" %s", input[n++]);
-		ft_putchar('\n');
-		
-		n = 0;
-		while (input[n])
-			ft_strdel(input + n++);
 
 		if (split != NULL)
 		{
@@ -303,6 +292,15 @@ static void	ft_find_and_exec_bin(char **input, char ***env)
 				ft_strdel(split + n++);
 		}
 	}
+	n = 0;
+	ft_printf("minishell: command not found:");
+	while (input[n])
+		ft_printf(" %s", input[n++]);
+	ft_putchar('\n');
+
+	n = 0;
+	while (input[n])
+		ft_strdel(input + n++);
 	exit(-1);
 }
 
@@ -311,7 +309,7 @@ int	main(int ac, char **av, char **env)
 	pid_t	pid = -1;
 	char	**input;
 	int		i;
-	
+
 	(void)ac;
 	(void)av;
 
