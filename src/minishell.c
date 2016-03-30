@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/03/30 16:41:16 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/03/30 23:02:38 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,8 @@ static void	ft_unset_env(char **arg, char ***env, int *modified)
 	char	**new_env;
 	char	*tmp;
 
-	if ((pos = ft_get_in_env(tmp = ft_strjoin_free(ft_strdup(arg[1]), ft_strdup("=")), *env)) != -1)
+	if ((pos = ft_get_in_env(tmp = ft_strjoin_free(ft_strdup(arg[1]),
+				ft_strdup("=")), *env)) != -1)
 	{
 		len = 0;
 		while ((*env)[len])
@@ -120,6 +121,7 @@ static void	ft_modify_env(char **arg, char ***env, int mode)
 {
 	static int	modified = 0;
 
+	printf("_________MODIFIED = '%d' ________", modified);
 	if (mode == 1)
 		ft_setenv(arg, env, &modified);
 	else
@@ -173,7 +175,7 @@ static void	ft_change_directory(char **arg, char ***env)
 		if (ft_strcmp(arg[1], "-") == 0)
 		{
 			if ((old_pwd = ft_get_in_env("OLDPWD=", *env)) == -1)
-				ft_printf("minishell: cd: OLDPWD not set\n"); //Well that's a lie, but who cares ?!
+				ft_printf("minishell: cd: OLDPWD not set\n");
 			else
 			{
 				ft_printf("Go to: '%s'\n", *(*env + old_pwd) + 7);
@@ -200,10 +202,6 @@ static void	ft_print_env(char **env)
 		ft_printf("%s\n", env[i++]);
 }
 
-
-
-
-
 static char	**ft_get_user_input(char ***env)
 {
 	char	**arg;
@@ -211,7 +209,7 @@ static char	**ft_get_user_input(char ***env)
 	int		i;
 
 	arg = NULL;
-	if (get_next_line(1, &str))
+	if (get_next_line(1, &str) && ft_strcmp(str, "") != 0)
 	{
 		if ((arg = ft_strsplit(str, ' ')) != NULL)
 		{
@@ -259,17 +257,19 @@ static char	**ft_get_user_input(char ***env)
 	return (NULL);
 }
 
-static void	ft_find_and_exec_bin(char **input, char **env)
+static void	ft_find_and_exec_bin(char **input, char ***env)
 {
 	char	*path;
 	char	**split;
 	int		i;
 	int		n;
-	
+
+	ft_printf("1) Exec: '%s'\n", input[0]);	
 	if (execve(input[0], input, NULL) == -1
-		&& (i = ft_get_in_env("PATH=", env)) != -1)
+		&& (i = ft_get_in_env("PATH=", *env)) != -1)
 	{
-		split = ft_strsplit(env[i], ':');
+		ft_printf("Goes there\n");
+		split = ft_strsplit((*env)[i], ':');
 		i = 0;
 		while (split[i] != '\0')
 		{
@@ -277,8 +277,9 @@ static void	ft_find_and_exec_bin(char **input, char **env)
 							ft_strjoin_free(ft_strdup("/"),
 								ft_strdup(input[0]))), X_OK) == 0)
 			{
+				ft_printf("2) Exec: '%s'\n", path);	
 				if (execve(path, input, NULL) == -1)
-					ft_printf("EXECVE ERROR.\n");
+					ft_printf("minishell: execve: cannot be executed.\n");
 				ft_strdel(&path);
 				return ;
 			}
@@ -301,8 +302,8 @@ static void	ft_find_and_exec_bin(char **input, char **env)
 			while (split[n])
 				ft_strdel(split + n++);
 		}
-		exit(-1);
 	}
+	exit(-1);
 }
 
 int	main(int ac, char **av, char **env)
@@ -320,9 +321,11 @@ int	main(int ac, char **av, char **env)
 		if ((input = ft_get_user_input(&env)) != NULL)
 			pid = fork();
 		if (pid == 0)
-			ft_find_and_exec_bin(input, env);
+			ft_find_and_exec_bin(input, &env);
 		else if (pid > 0)
+		{
 			wait(NULL);
+		}
 		i = 0;
 		if (input != NULL)
 		{
