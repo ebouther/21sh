@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/03/30 01:00:18 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/03/30 13:59:32 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ static void	ft_open_dir(char *dir, t_env *e)
 static void	ft_change_directory(char **arg, char **env, t_env *e)
 {
 	int	i;
-	//char directory[1024];
 
 	i = -1;
 	while (arg[++i])
@@ -192,7 +191,7 @@ int	main(int ac, char **av, char **env)
 		if (input != NULL)
 		{
 			while (input[i])
-				ft_strdel(input + i);
+				ft_strdel(input + i++);
 			free((void *)input);
 			input = NULL;
 		}
