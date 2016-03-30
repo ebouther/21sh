@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/03/30 13:59:32 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/03/30 15:28:18 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,14 +38,14 @@ static int	ft_open_home_dir(char **env)
 			return (0);
 	}
 	else
-		ft_printf("$HOME is not set.\n");
+		ft_printf("minishell: $HOME is not set.\n");
 	return (-1);
 }
 
 static void	ft_open_dir(char *dir, t_env *e)
 {
 	if (chdir((const char *)dir) == -1)
-		ft_printf("CHDIR Error\n");
+		ft_printf("minishell: chdir: Directory does not exist: %s\n", dir);
 	else
 	{
 		if (e->last_dir != NULL)
@@ -83,7 +83,101 @@ static void	ft_change_directory(char **arg, char **env, t_env *e)
 		ft_open_home_dir(env);
 }
 
-static char	**ft_get_user_input(char **env, t_env *e)
+static void	ft_print_env(char **env)
+{
+	int	i;
+
+	i = 0;
+	while (env[i])
+		ft_printf("%s\n", env[i++]);
+}
+
+static void	ft_unset_env(char **arg, char ***env, int *modified)
+{
+	int		pos;
+	int		len;
+	int		i;
+	char	**new_env;
+	char	*tmp;
+
+	if ((pos = ft_get_in_env(tmp = ft_strjoin_free(ft_strdup(arg[1]), ft_strdup("=")), *env)) != -1)
+	{
+		len = 0;
+		while ((*env)[len])
+			len++;
+		if ((new_env = (char **)malloc(sizeof(char *) * (len + 1))) == NULL)
+		{
+			ft_printf("minishell: malloc: cannot allocate memory.\n");
+			exit(-1);
+		}
+		i = 0;
+		while ((*env)[i])
+		{
+			if (i != pos)
+			{
+				new_env[i] = ft_strdup((*env)[i]);
+				if (*modified == 1)
+					ft_strdel(*env + i);
+			}
+			i++;	
+		}
+		if (*modified == 1)
+			free((void *)(*env));
+		new_env[len] = NULL;
+		*env = new_env;
+		*modified = 1;
+	}
+}
+
+static void	ft_setenv(char **arg, char ***env, int *modified)
+{
+	int		len;
+	int		i;
+	char	*tmp;
+	char	**new_env;
+	int		pos;
+
+
+	pos = ft_get_in_env(tmp = ft_strjoin_free(ft_strdup(arg[1]), ft_strdup("=")), *env);
+	len = 0;
+	while ((*env)[len])
+		len++;
+	if ((new_env = (char **)malloc(sizeof(char *) * (len + ((pos == -1) ? 1 : 0) + 1))) == NULL)
+	{
+		ft_printf("minishell: malloc: cannot allocate memory.\n");
+		exit(-1);
+	}
+	i = 0;
+	while ((*env)[i])
+	{
+		new_env[i] = ft_strdup((*env)[i]);
+		if (i == pos)
+			new_env[i] = ft_strjoin_free(ft_strdup(tmp), ft_strdup(arg[2]));
+		if (*modified == 1)
+			ft_strdel((*env) + i);
+		i++;
+	}
+	if (*modified == 1)
+		free((void *)(*env));
+	if (pos == -1)
+		new_env[len] = ft_strjoin_free(ft_strdup(tmp), ft_strdup(arg[2]));
+	new_env[len + ((pos == -1) ? 1 : 0)] = NULL;
+	(*env) = new_env;
+	*modified = 1;
+	ft_strdel(&tmp);
+}
+
+static void	ft_modify_env(char **arg, char ***env, int mode)
+{
+	static int	modified = 0;
+
+	if (mode == 1)
+		ft_setenv(arg, env, &modified);
+	else
+		ft_unset_env(arg, env, &modified);
+}
+
+static char	**ft_get_user_input(char ***env, t_env *e)
 {
 	char	**arg;
 	char	*str;
@@ -96,8 +190,30 @@ static char	**ft_get_user_input(char **env, t_env *e)
 		{
 			if (ft_strcmp(arg[0], "exit") == 0)
 				exit(0);
+			else if (ft_strcmp(arg[0], "unsetenv") == 0)
+			{
+				i = 0;
+				while (arg[i])
+					i++;
+				if (i > 1)
+					ft_modify_env(arg, env, 0);
+				else
+					ft_printf("minishell: unsetenv: not enough arguments.\n");
+			}
+			else if (ft_strcmp(arg[0], "setenv") == 0)
+			{
+				i = 0;
+				while (arg[i])
+					i++;
+				if (i > 2)
+					ft_modify_env(arg, env, 1);
+				else if (i == 1)
+					ft_print_env(*env);
+			}
+			else if (ft_strcmp(arg[0], "env") == 0)
+				ft_print_env(*env);
 			else if (ft_strcmp(arg[0], "cd") == 0)
-				ft_change_directory(arg, env, e);
+				ft_change_directory(arg, *env, e);
 			else if (ft_strcmp(arg[0], "clear") == 0)
 				ft_printf("\033[2J\033[1;1H");
 			else
@@ -105,7 +221,6 @@ static char	**ft_get_user_input(char **env, t_env *e)
 				ft_strdel(&str);
 				return (arg);
 			}
-
 			i = 0;
 			while (arg[i])
 				ft_strdel(arg + i++);
@@ -144,7 +259,6 @@ static void	ft_find_and_exec_bin(char **input, char **env)
 			ft_strdel(&path);
 			i++;
 		}
-		
 		n = 0;
 		ft_printf("minishell: command not found:");
 		while (input[n])
@@ -179,7 +293,7 @@ int	main(int ac, char **av, char **env)
 	while (42)
 	{
 		ft_printf("$> ");
-		if ((input = ft_get_user_input(env, &e)) != NULL)
+		if ((input = ft_get_user_input(&env, &e)) != NULL)
 			pid = fork();
 		if (pid == 0) //child process
 		{
