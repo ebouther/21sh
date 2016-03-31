@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:39:03 by ebouther          #+#    #+#             */
-/*   Updated: 2016/03/31 19:37:07 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/03/31 19:52:50 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,13 @@
 */
 void		ft_modify_env(char **arg, char ***env, int mode);
 void		ft_print_env(char **env);
-void		ft_change_directory(char **arg, char ***env);
 
 /*
 ** browser.c
 */
 void		ft_open_dir(char *dir, char ***env);
 int			ft_open_home_dir(char **env);
+void		ft_change_directory(char **arg, char ***env);
 
 /*
 ** env.c

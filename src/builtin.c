@@ -6,41 +6,11 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 19:20:29 by ebouther          #+#    #+#             */
-/*   Updated: 2016/03/31 19:33:20 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/03/31 19:55:51 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void		ft_change_directory(char **arg, char ***env)
-{
-	int	i;
-	int	old_pwd;
-
-	i = -1;
-	while (arg[++i])
-		;
-	if (i > 2)
-		ft_printf("cd: string not in pwd: %s\n", arg[1]);
-	else if (i > 1)
-	{
-		if (ft_strcmp(arg[1], "-") == 0)
-		{
-			if ((old_pwd = ft_get_in_env("OLDPWD=", *env)) == -1)
-				ft_printf("minishell: cd: OLDPWD not set\n");
-			else
-				ft_open_dir(*((*env) + old_pwd) + 7, env);
-		}
-		else if (ft_strcmp(arg[1], "~") == 0)
-			ft_open_home_dir(*env);
-		else if (access(arg[1], R_OK) == 0)
-			ft_open_dir(arg[1], env);
-		else
-			ft_printf("minishell: cd: cannot access to path.\n");
-	}
-	else
-		ft_open_home_dir(*env);
-}
 
 static void	ft_setenv(char **arg, char ***env, int *modified)
 {

@@ -6,13 +6,47 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 19:25:43 by ebouther          #+#    #+#             */
-/*   Updated: 2016/03/31 19:32:29 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/03/31 19:55:50 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int		ft_open_home_dir(char **env)
+static void	ft_change_directory_core(char **arg, char ***env)
+{
+	int	old_pwd;
+
+	if (ft_strcmp(arg[1], "-") == 0)
+	{
+		if ((old_pwd = ft_get_in_env("OLDPWD=", *env)) == -1)
+			ft_printf("minishell: cd: OLDPWD not set\n");
+		else
+			ft_open_dir(*((*env) + old_pwd) + 7, env);
+	}
+	else if (ft_strcmp(arg[1], "~") == 0)
+		ft_open_home_dir(*env);
+	else if (access(arg[1], R_OK) == 0)
+		ft_open_dir(arg[1], env);
+	else
+		ft_printf("minishell: cd: cannot access to path.\n");
+}
+
+void		ft_change_directory(char **arg, char ***env)
+{
+	int	i;
+
+	i = -1;
+	while (arg[++i])
+		;
+	if (i > 2)
+		ft_printf("cd: string not in pwd: %s\n", arg[1]);
+	else if (i > 1)
+		ft_change_directory_core(arg, env);
+	else
+		ft_open_home_dir(*env);
+}
+
+int			ft_open_home_dir(char **env)
 {
 	int	i;
 
@@ -29,7 +63,7 @@ int		ft_open_home_dir(char **env)
 	return (-1);
 }
 
-void	ft_open_dir(char *dir, char ***env)
+void		ft_open_dir(char *dir, char ***env)
 {
 	char	**arg;
 	int		i;
