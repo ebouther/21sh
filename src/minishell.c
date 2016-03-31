@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/03/31 15:06:06 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/03/31 17:35:49 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,6 +197,32 @@ static void	ft_print_env(char **env)
 		ft_printf("%s\n", env[i++]);
 }
 
+static void	ft_parse_args_for_env_var(char ***arg, char ***env)
+{
+	int	i;
+	int	pos;
+	int	len;
+	char	*tmp;
+
+	i = 0;
+	tmp = NULL;
+	while ((*arg)[i])
+	{
+		len = 0;
+		if ((*arg)[i][0] == '$' && !(i == 1 && ft_strcmp((*arg)[0], "setenv") != 0))
+		{
+			len = ft_strlen((*arg)[i]);
+			if ((pos = ft_get_in_env(tmp = ft_strjoin((*arg)[i] + 1, "="), *env)) != -1)
+			{
+				ft_strdel(&tmp);
+				ft_strdel((*arg) + i);
+				(*arg)[i] = ft_strdup((*env)[pos] + len);
+			}
+		}
+		i++;
+	}
+}
+
 static char	**ft_get_user_input(char ***env)
 {
 	char	**arg;
@@ -209,11 +235,10 @@ static char	**ft_get_user_input(char ***env)
 	{
 		if ((arg = ft_strsplit(str, ' ')) != NULL)
 		{
-			
-				len = 0;
-				while (arg[len])
-					len++;
-
+			ft_parse_args_for_env_var(&arg, env);
+			len = 0;
+			while (arg[len])
+				len++;
 			if (ft_strcmp(arg[0], "exit") == 0)
 				exit(0);
 			else if (ft_strcmp(arg[0], "unsetenv") == 0)
@@ -226,7 +251,12 @@ static char	**ft_get_user_input(char ***env)
 			else if (ft_strcmp(arg[0], "setenv") == 0)
 			{
 				if (len > 2)
-					ft_modify_env(arg, env, 1);
+				{
+					if (ft_isalpha(arg[1][0]) == 0)
+						ft_printf("minishell: setenv: Variable name must begin with a letter.\n");
+					else
+						ft_modify_env(arg, env, 1);
+				}
 				else if (len == 1)
 					ft_print_env(*env);
 			}
