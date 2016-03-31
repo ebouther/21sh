@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/03/31 17:35:49 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/03/31 17:56:07 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,11 +85,12 @@ static void	ft_unset_env(char **arg, char ***env, int *modified)
 	int		pos;
 	int		len;
 	int		i;
+	int		n;
 	char	**new_env;
 	char	*tmp;
 
 	if ((pos = ft_get_in_env(tmp = ft_strjoin_free(ft_strdup(arg[1]),
-						ft_strdup("=")), *env)) != -1)
+			ft_strdup("=")), *env)) != -1)
 	{
 		len = 0;
 		while ((*env)[len])
@@ -100,19 +101,21 @@ static void	ft_unset_env(char **arg, char ***env, int *modified)
 			exit(-1);
 		}
 		i = 0;
+		n = 0;
 		while ((*env)[i])
 		{
 			if (i != pos)
 			{
-				new_env[i] = ft_strdup((*env)[i]);
+				new_env[n] = ft_strdup((*env)[i]);
 				if (*modified == 1)
 					ft_strdel(*env + i);
+				n++;
 			}
-			i++;	
+			i++;
 		}
 		if (*modified == 1)
 			free((void *)(*env));
-		new_env[len] = NULL;
+		new_env[n] = NULL;
 		*env = new_env;
 		*modified = 1;
 	}
