@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/03/30 23:19:21 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/03/31 14:43:17 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,6 @@ static void	ft_modify_env(char **arg, char ***env, int mode)
 {
 	static int	modified = 0;
 
-	printf("_________MODIFIED = '%d' ________", modified);
 	if (mode == 1)
 		ft_setenv(arg, env, &modified);
 	else
@@ -183,7 +182,7 @@ static void	ft_change_directory(char **arg, char ***env)
 			}
 		}
 		else if (ft_strcmp(arg[1], "~") == 0)
-			ft_open_home_dir(*env); // Should be replaced by ft_open_dir()
+			ft_open_home_dir(*env);
 		else if (access(arg[1], R_OK) == 0)
 			ft_open_dir(arg[1], env);
 		else
@@ -206,6 +205,7 @@ static char	**ft_get_user_input(char ***env)
 {
 	char	**arg;
 	char	*str;
+	int		len;
 	int		i;
 
 	arg = NULL;
@@ -213,30 +213,34 @@ static char	**ft_get_user_input(char ***env)
 	{
 		if ((arg = ft_strsplit(str, ' ')) != NULL)
 		{
+			
+				len = 0;
+				while (arg[len])
+					len++;
+
 			if (ft_strcmp(arg[0], "exit") == 0)
 				exit(0);
 			else if (ft_strcmp(arg[0], "unsetenv") == 0)
 			{
-				i = 0;
-				while (arg[i])
-					i++;
-				if (i > 1)
+				if (len > 1)
 					ft_modify_env(arg, env, 0);
 				else
 					ft_printf("minishell: unsetenv: not enough arguments.\n");
 			}
 			else if (ft_strcmp(arg[0], "setenv") == 0)
 			{
-				i = 0;
-				while (arg[i])
-					i++;
-				if (i > 2)
+				if (len > 2)
 					ft_modify_env(arg, env, 1);
-				else if (i == 1)
+				else if (len == 1)
 					ft_print_env(*env);
 			}
 			else if (ft_strcmp(arg[0], "env") == 0)
-				ft_print_env(*env);
+			{
+				if (len == 1)
+					ft_print_env(*env);
+				else
+					ft_printf("minishell: env: %s: No such file or directory.\n", arg[1]);
+			}
 			else if (ft_strcmp(arg[0], "cd") == 0)
 				ft_change_directory(arg, env);
 			else if (ft_strcmp(arg[0], "clear") == 0)
@@ -264,7 +268,7 @@ static void	ft_find_and_exec_bin(char **input, char ***env)
 	int		i;
 	int		n;
 
-	if (execve(input[0], input, NULL) == -1
+	if (execve(input[0], input, *env) == -1
 			&& (i = ft_get_in_env("PATH=", *env)) != -1)
 	{
 		split = ft_strsplit((*env)[i], ':');
@@ -275,8 +279,7 @@ static void	ft_find_and_exec_bin(char **input, char ***env)
 							ft_strjoin_free(ft_strdup("/"),
 								ft_strdup(input[0]))), X_OK) == 0)
 			{
-				ft_printf("2) Exec: '%s'\n", path);	
-				if (execve(path, input, NULL) == -1)
+				if (execve(path, input, *env) == -1)
 					ft_printf("minishell: execve: cannot be executed.\n");
 				ft_strdel(&path);
 				return ;
