@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/03/31 14:43:17 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/03/31 15:06:06 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,10 @@ static void	ft_setenv(char **arg, char ***env, int *modified)
 	i = 0;
 	while ((*env)[i])
 	{
-		new_env[i] = ft_strdup((*env)[i]);
 		if (i == pos)
 			new_env[i] = ft_strjoin_free(ft_strdup(tmp), ft_strdup(arg[2]));
+		else
+			new_env[i] = ft_strdup((*env)[i]);
 		if (*modified == 1)
 			ft_strdel((*env) + i);
 		i++;
@@ -140,7 +141,7 @@ static void	ft_open_dir(char *dir, char ***env)
 		ft_printf("minishell: cd: directory does not exist: %s\n", dir);
 	else
 	{
-		if ((arg = (char **)malloc(sizeof(char *) * (4))) == NULL)
+		if ((arg = (char **)malloc(sizeof(char *) * (3))) == NULL)
 		{
 			ft_printf("minishell: malloc: cannot allocate memory.\n");
 			exit(-1);
@@ -149,13 +150,11 @@ static void	ft_open_dir(char *dir, char ***env)
 		arg[1] = ft_strdup("OLDPWD");
 		arg[2] = ft_strdup(cwd);
 		arg[3] = NULL;
-		ft_modify_env(arg, env, 1); // Doesn't work :(
+		ft_modify_env(arg, env, 1);
 		while (arg[i])
-		{
-			ft_strdel(arg + i);
-			i++;
-		}
+			ft_strdel(arg + i++);
 		free((void *)arg);
+		arg = NULL;
 	}
 }
 
@@ -176,10 +175,7 @@ static void	ft_change_directory(char **arg, char ***env)
 			if ((old_pwd = ft_get_in_env("OLDPWD=", *env)) == -1)
 				ft_printf("minishell: cd: OLDPWD not set\n");
 			else
-			{
-				ft_printf("Go to: '%s'\n", *(*env + old_pwd) + 7);
 				ft_open_dir(*((*env) + old_pwd) + 7, env);
-			}
 		}
 		else if (ft_strcmp(arg[1], "~") == 0)
 			ft_open_home_dir(*env);
@@ -324,9 +320,7 @@ int	main(int ac, char **av, char **env)
 		if (pid == 0)
 			ft_find_and_exec_bin(input, &env);
 		else if (pid > 0)
-		{
 			wait(NULL);
-		}
 		i = 0;
 		if (input != NULL)
 		{
