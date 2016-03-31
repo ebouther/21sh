@@ -23,7 +23,11 @@ SRC_DIR = ./src/
 INC_DIR = ./inc/
 OBJ_DIR = ./obj/
 
-SRC_FILES =	minishell.c
+SRC_FILES =	minishell.c \
+			builtin.c \
+			browser.c \
+			env.c \
+			input.c
 
 OBJ_FILES = $(SRC_FILES:.c=.o)
 INC_FILES = minishell.h

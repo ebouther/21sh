@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:39:03 by ebouther          #+#    #+#             */
-/*   Updated: 2016/03/31 15:06:07 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/03/31 19:37:07 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,5 +17,29 @@
 #include <stdio.h>
 #include <signal.h>
 #include "libft.h"
+
+/*
+** builtin.c
+*/
+void		ft_modify_env(char **arg, char ***env, int mode);
+void		ft_print_env(char **env);
+void		ft_change_directory(char **arg, char ***env);
+
+/*
+** browser.c
+*/
+void		ft_open_dir(char *dir, char ***env);
+int			ft_open_home_dir(char **env);
+
+/*
+** env.c
+*/
+int			ft_get_in_env(char *search, char **env);
+void		ft_parse_args_for_env_var(char ***arg, char ***env);
+
+/*
+** input.c
+*/
+char		**ft_get_user_input(char ***env);
 
 #endif
