@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/01 18:28:21 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/01 20:01:15 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,12 @@ static void	ft_exec_search_in_path(int i, char **input, char ***env)
 			ft_strdel(split + i++);
 }
 
-static void	ft_find_and_exec_bin(char **input, char ***env)
+static void	ft_find_and_exec_bin(char mode, char **input, char ***env)
 {
 	int		n;
 	int		i;
 
+	ft_printf("MODE: '%c'\n", mode);
 	if (execve(input[0], input, *env) == -1
 			&& (i = ft_get_in_env("PATH=", *env)) != -1)
 		ft_exec_search_in_path(i, input, env);
@@ -62,17 +63,19 @@ int			main(int ac, char **av, char **env)
 	pid_t	pid;
 	char	**input;
 	int		i;
+	char	mode;
 
 	(void)ac;
 	(void)av;
 	pid = -1;
 	while (42)
 	{
+		mode = 0;
 		ft_printf("$> ");
-		if ((input = ft_get_user_input(&env)) != NULL)
+		if ((input = ft_get_user_input(&mode, &env)) != NULL)
 			pid = fork();
 		if (pid == 0)
-			ft_find_and_exec_bin(input, &env);
+			ft_find_and_exec_bin(mode, input, &env);
 		else if (pid > 0)
 			wait(NULL);
 		if (input != NULL && (i = 0) == 0)

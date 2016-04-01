@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:39:03 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/01 18:08:47 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/01 20:01:16 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,6 @@ void		ft_parse_args_for_env_var(char ***arg, char ***env);
 /*
 ** input.c
 */
-char		**ft_get_user_input(char ***env);
+char		**ft_get_user_input(char *mode, char ***env);
 
 #endif
