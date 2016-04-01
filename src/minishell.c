@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/01 17:51:44 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/01 18:07:04 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,24 +25,17 @@ static void	ft_exec_search_in_path(int i, char **input, char ***env)
 	i = 0;
 	while (split[i] != '\0')
 	{
-		if (access(path = ft_strjoin_free(ft_strdup(split[i]),
-						ft_strjoin_free(ft_strdup("/"),
-							ft_strdup(input[0]))), X_OK) == 0)
-		{
-			if (execve(path, input, *env) == -1)
-				ft_printf("minishell: execve: cannot be executed.\n");
-			ft_strdel(&path);
-			return ;
-		}
+		if (access(path = ft_strjoin_free(ft_strdup(split[i]), ft_strjoin_free(
+						ft_strdup("/"), ft_strdup(input[0]))), X_OK) == 0
+				&& execve(path, input, *env) == -1)
+			ft_printf("minishell: execve: cannot be executed.\n");
 		ft_strdel(&path);
 		i++;
 	}
+	i = 0;
 	if (split != NULL)
-	{
-		i = 0;
 		while (split[i])
 			ft_strdel(split + i++);
-	}
 }
 
 static void	ft_find_and_exec_bin(char **input, char ***env)
@@ -82,8 +75,7 @@ int			main(int ac, char **av, char **env)
 			ft_find_and_exec_bin(input, &env);
 		else if (pid > 0)
 			wait(NULL);
-		i = 0;
-		if (input != NULL)
+		if (input != NULL && (i = 0) == 0)
 		{
 			while (input[i])
 				ft_strdel(input + i++);
