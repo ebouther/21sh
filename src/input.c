@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 19:35:00 by ebouther          #+#    #+#             */
-/*   Updated: 2016/03/31 19:50:02 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/01 17:21:33 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ static char	**ft_switch_builtin_command_2(int len, char **arg, char ***env)
 		if (len == 1)
 			ft_print_env(*env);
 		else
-			ft_printf("minishell: env: %s: No such file or directory.\n", arg[1]);
+			ft_printf("minishell: env: %s: No such file or directory.\n",
+					arg[1]);
 	}
 	else if (ft_strcmp(arg[0], "cd") == 0)
 		ft_change_directory(arg, env);
@@ -43,10 +44,13 @@ static char	**ft_switch_builtin_command(int len, char **arg, char ***env)
 	}
 	else if (ft_strcmp(arg[0], "setenv") == 0)
 	{
-		if (len > 2)
+		if (len > 3)
+			ft_printf("minishell: setenv: Too many arguments.\n");
+		else if (len > 1)
 		{
 			if (ft_isalpha(arg[1][0]) == 0)
-				ft_printf("minishell: setenv: Variable name must begin with a letter.\n");
+				ft_printf("minishell: setenv: Variable name must begin \
+with a letter.\n");
 			else
 				ft_modify_env(arg, env, 1);
 		}
