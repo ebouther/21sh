@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:39:03 by ebouther          #+#    #+#             */
-/*   Updated: 2016/03/31 19:52:50 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/01 17:29:02 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,15 @@
 #include <stdio.h>
 #include <signal.h>
 #include "libft.h"
+
+typedef struct s_input
+{
+	char		**ret;
+	char		**arg;
+	char		*str;
+	int			len;
+	int			n;
+}				t_input;
 
 /*
 ** builtin.c
