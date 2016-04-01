@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 19:25:43 by ebouther          #+#    #+#             */
-/*   Updated: 2016/03/31 19:55:50 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/01 18:34:34 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,6 @@ static void	ft_change_directory_core(char **arg, char ***env)
 		else
 			ft_open_dir(*((*env) + old_pwd) + 7, env);
 	}
-	else if (ft_strcmp(arg[1], "~") == 0)
-		ft_open_home_dir(*env);
 	else if (access(arg[1], R_OK) == 0)
 		ft_open_dir(arg[1], env);
 	else

@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 19:28:25 by ebouther          #+#    #+#             */
-/*   Updated: 2016/03/31 19:34:24 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/01 18:32:37 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,16 @@ void	ft_parse_args_for_env_var(char ***arg, char ***env)
 				ft_strdel(&tmp);
 				ft_strdel((*arg) + i);
 				(*arg)[i] = ft_strdup((*env)[pos] + len);
+			}
+		}
+		else if ((*arg)[i][0] == '~')
+		{
+			if ((pos = ft_get_in_env("HOME=", *env)) != -1)
+			{
+				tmp = (*arg)[i];
+				(*arg)[i] = ft_strjoin_free(ft_strdup((*env)[pos] + 5),
+						ft_strdup(tmp + 1));
+				ft_strdel(&tmp);
 			}
 		}
 		i++;
