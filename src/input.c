@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 19:35:00 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/01 20:01:17 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/02 18:36:50 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,19 @@ static char	**ft_switch_builtin_command_2(char *mode, int len, char **arg, char 
 				if (ft_strcmp(arg[1], "-") == 0
 						|| ft_strcmp(arg[1], "--ignore-environment") == 0
 						|| ft_strcmp(arg[1], "-i") == 0)
+				{
 					*mode = 'i';
-				else if (ft_strcmp(arg[1], "-u") == 0 || ft_strcmp(arg[1], "--unset") == 0)
+					if (arg[2] == NULL)
+						return (NULL);
+				}
+				else if ((ft_strcmp(arg[1], "-u") == 0 || ft_strcmp(arg[1], "--unset") == 0)
+						&& arg[2] != NULL)
 					*mode = 'u';
 				else
 				{
 					ft_printf("env: illegal option -- %s\n \
 usage: env [[-, -i, --ignore-environment] [-u name, --unset name]] [command [args...]]\n", arg[1]);
+					return (NULL);
 				}
 			}
 			return (arg);
@@ -38,7 +44,7 @@ usage: env [[-, -i, --ignore-environment] [-u name, --unset name]] [command [arg
 			ft_print_env(*env);
 		else
 			ft_printf("minishell: env: %s: No such file or directory.\n",
-					arg[1]);
+				arg[1]);
 	}
 	else if (ft_strcmp(arg[0], "unsetenv") == 0)
 	{
