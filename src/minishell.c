@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/03 14:52:38 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/03 15:10:14 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,16 +94,20 @@ static void	ft_find_and_exec_bin(char mode, char **input, char ***env)
 		ft_strdel(input + 1);
 		input += 2;
 		new_env = (mode == 'i') ? NULL : ft_new_env(input, *env);
+		ft_strdel(input);
 		input++;
 	}
-	if (execve(input[0], input, new_env) == -1
-			&& (i = ft_get_in_env("PATH=", *env)) != -1)
-		ft_exec_search_in_path(i, input, *env, new_env);
-	n = 0;
-	ft_printf("minishell: command not found:");
-	while (input[n])
-		ft_printf(" %s", input[n++]);
-	ft_putchar('\n');
+	if (input[0])
+	{
+		if (execve(input[0], input, new_env) == -1
+				&& (i = ft_get_in_env("PATH=", *env)) != -1)
+			ft_exec_search_in_path(i, input, *env, new_env);
+		n = 0;
+		ft_printf("minishell: command not found:");
+		while (input[n])
+			ft_printf(" %s", input[n++]);
+		ft_putchar('\n');
+	}
 	n = 0;
 	while (input[n])
 		ft_strdel(input + n++);
