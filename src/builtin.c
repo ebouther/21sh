@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 19:20:29 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/03 14:52:39 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/03 16:27:22 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,7 @@ static void	ft_setenv(char **arg, char ***env, int *modified)
 	while ((*env)[len])
 		len++;
 	if ((new_env = (char **)malloc(sizeof(char *) * (len + ((pos == -1) ? 1 : 0) + 1))) == NULL)
-	{
-		ft_printf("minishell: malloc: cannot allocate memory.\n");
-		exit(-1);
-	}
+		ft_error_exit("minishell: malloc: cannot allocate memory.\n");
 	ft_new_env(arg, env, modified, tmp, pos, new_env);
 	if (*modified == 1)
 		free((void *)(*env));
@@ -58,41 +55,28 @@ static void	ft_setenv(char **arg, char ***env, int *modified)
 
 static void	ft_unset_env(char **arg, char ***env, int *modified)
 {
-	int		pos;
-	int		len;
-	int		i;
-	int		n;
-	char	**new_env;
-	char	*tmp;
+	t_unset_env u;
 
-	if ((pos = ft_get_in_env(tmp = ft_strjoin_free(ft_strdup(arg[1]),
+	u = (t_unset_env){.len = 0, .i = -1, .n = 0};
+	if ((u.pos = ft_get_in_env(u.tmp = ft_strjoin_free(ft_strdup(arg[1]),
 			ft_strdup("=")), *env)) != -1)
 	{
-		len = 0;
-		while ((*env)[len])
-			len++;
-		if ((new_env = (char **)malloc(sizeof(char *) * (len + 1))) == NULL)
-		{
-			ft_printf("minishell: malloc: cannot allocate memory.\n");
-			exit(-1);
-		}
-		i = 0;
-		n = 0;
-		while ((*env)[i])
-		{
-			if (i != pos)
+		while ((*env)[u.len])
+			u.len++;
+		if ((u.new_env = (char **)malloc(sizeof(char *) * (u.len + 1))) == NULL)
+			ft_error_exit("minishell: malloc: cannot allocate memory.\n");
+		while ((*env)[++(u.i)])
+			if (u.i != u.pos)
 			{
-				new_env[n] = ft_strdup((*env)[i]);
+				u.new_env[u.n] = ft_strdup((*env)[u.i]);
 				if (*modified == 1)
-					ft_strdel(*env + i);
-				n++;
+					ft_strdel(*env + u.i);
+				u.n++;
 			}
-			i++;
-		}
 		if (*modified == 1)
-			free((void *)(*env));
-		new_env[n] = NULL;
-		*env = new_env;
+			ft_memdel((void **)(env));
+		u.new_env[u.n] = NULL;
+		*env = u.new_env;
 		*modified = 1;
 	}
 }

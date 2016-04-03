@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:39:03 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/02 17:34:28 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/03 16:27:23 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,26 @@ typedef struct s_input
 	int			len;
 	int			n;
 }				t_input;
+
+typedef struct	s_new_env
+{
+	char		**new_env;
+	char		*search;
+	int			search_len;
+	int			len;
+	int			i;
+	int			n;
+}				t_new_env;
+
+typedef struct	s_unset_env
+{
+	int			pos;
+	int			len;
+	int			i;
+	int			n;
+	char		**new_env;
+	char		*tmp;
+}				t_unset_env;
 
 /*
 ** builtin.c
