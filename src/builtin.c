@@ -6,23 +6,24 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 19:20:29 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/03 16:27:22 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/03 17:24:57 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	ft_new_env(char **arg, char ***env, int *modified, char *tmp, int pos, char **new_env)
+static void	ft_new_env(char **arg, char ***env, int *modified, t_setenv *s)
 {
 	int		i;
 
 	i = 0;
 	while ((*env)[i])
 	{
-		if (i == pos)
-			new_env[i] = ft_strjoin_free(ft_strdup(tmp), ft_strdup(arg[2]));
+		if (i == s->pos)
+			s->new_env[i] = ft_strjoin_free(ft_strdup(s->tmp),
+					ft_strdup(arg[2]));
 		else
-			new_env[i] = ft_strdup((*env)[i]);
+			s->new_env[i] = ft_strdup((*env)[i]);
 		if (*modified == 1)
 			ft_strdel((*env) + i);
 		i++;
@@ -31,26 +32,25 @@ static void	ft_new_env(char **arg, char ***env, int *modified, char *tmp, int po
 
 static void	ft_setenv(char **arg, char ***env, int *modified)
 {
-	int		len;
-	char	*tmp;
-	char	**new_env;
-	int		pos;
+	t_setenv	s;
 
-	pos = ft_get_in_env(tmp = ft_strjoin_free(ft_strdup(arg[1]), ft_strdup("=")), *env);
-	len = 0;
-	while ((*env)[len])
-		len++;
-	if ((new_env = (char **)malloc(sizeof(char *) * (len + ((pos == -1) ? 1 : 0) + 1))) == NULL)
+	s = (t_setenv) {.len = 0, .pos = 0, .tmp = NULL, .new_env = NULL};
+	s.pos = ft_get_in_env(
+		s.tmp = ft_strjoin_free(ft_strdup(arg[1]), ft_strdup("=")), *env);
+	while ((*env)[s.len])
+		s.len++;
+	if ((s.new_env = (char **)malloc(sizeof(char *)
+			* (s.len + ((s.pos == -1) ? 1 : 0) + 1))) == NULL)
 		ft_error_exit("minishell: malloc: cannot allocate memory.\n");
-	ft_new_env(arg, env, modified, tmp, pos, new_env);
+	ft_new_env(arg, env, modified, &s);
 	if (*modified == 1)
 		free((void *)(*env));
-	if (pos == -1)
-		new_env[len] = ft_strjoin_free(ft_strdup(tmp), ft_strdup(arg[2]));
-	new_env[len + ((pos == -1) ? 1 : 0)] = NULL;
-	(*env) = new_env;
+	if (s.pos == -1)
+		s.new_env[s.len] = ft_strjoin_free(ft_strdup(s.tmp), ft_strdup(arg[2]));
+	s.new_env[s.len + ((s.pos == -1) ? 1 : 0)] = NULL;
+	(*env) = s.new_env;
 	*modified = 1;
-	ft_strdel(&tmp);
+	ft_strdel(&s.tmp);
 }
 
 static void	ft_unset_env(char **arg, char ***env, int *modified)
@@ -58,7 +58,8 @@ static void	ft_unset_env(char **arg, char ***env, int *modified)
 	t_unset_env u;
 
 	u = (t_unset_env){.len = 0, .i = -1, .n = 0};
-	if ((u.pos = ft_get_in_env(u.tmp = ft_strjoin_free(ft_strdup(arg[1]),
+	if ((u.pos = ft_get_in_env(
+			u.tmp = ft_strjoin_free(ft_strdup(arg[1]),
 			ft_strdup("=")), *env)) != -1)
 	{
 		while ((*env)[u.len])
@@ -91,7 +92,7 @@ void		ft_modify_env(char **arg, char ***env, int mode)
 		ft_unset_env(arg, env, &modified);
 }
 
-void	ft_print_env(char **env)
+void		ft_print_env(char **env)
 {
 	int	i;
 

@@ -6,13 +6,14 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 19:35:00 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/02 18:36:50 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/03 17:50:48 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	**ft_switch_builtin_command_2(char *mode, int len, char **arg, char ***env)
+static char	**ft_switch_builtin_command_2(char *mode, int len, char **arg,
+		char ***env)
 {
 	if (ft_strcmp(arg[0], "env") == 0)
 	{
@@ -28,13 +29,15 @@ static char	**ft_switch_builtin_command_2(char *mode, int len, char **arg, char 
 					if (arg[2] == NULL)
 						return (NULL);
 				}
-				else if ((ft_strcmp(arg[1], "-u") == 0 || ft_strcmp(arg[1], "--unset") == 0)
+				else if ((ft_strcmp(arg[1], "-u") == 0
+						|| ft_strcmp(arg[1], "--unset") == 0)
 						&& arg[2] != NULL)
 					*mode = 'u';
 				else
 				{
 					ft_printf("env: illegal option -- %s\n \
-usage: env [[-, -i, --ignore-environment] [-u name, --unset name]] [command [args...]]\n", arg[1]);
+usage: env [[-, -i, --ignore-environment] [-u name, --unset name]] \
+[command [args...]]\n", arg[1]);
 					return (NULL);
 				}
 			}
@@ -62,7 +65,8 @@ usage: env [[-, -i, --ignore-environment] [-u name, --unset name]] [command [arg
 	return (NULL);
 }
 
-static char	**ft_switch_builtin_command(char *mode, int len, char **arg, char ***env)
+static char	**ft_switch_builtin_command(char *mode, int len, char **arg,
+		char ***env)
 {
 	if (ft_strcmp(arg[0], "exit") == 0)
 		exit(0);
@@ -99,7 +103,8 @@ char		**ft_get_user_input(char *mode, char ***env)
 			i.len = 0;
 			while (i.arg[i.len])
 				i.len++;
-			if ((i.ret = ft_switch_builtin_command(mode, i.len, i.arg, env)) != NULL)
+			if ((i.ret = ft_switch_builtin_command(
+				mode, i.len, i.arg, env)) != NULL)
 			{
 				ft_strdel(&i.str);
 				return (i.ret);

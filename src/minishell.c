@@ -6,13 +6,14 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/03 15:19:16 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/03 17:32:36 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	ft_exec_search_in_path(int i, char **input, char **env, char **execve_env)
+static void	ft_exec_search_in_path(int i, char **input, char **env,
+		char **execve_env)
 {
 	char	**split;
 	char	*path;
@@ -52,21 +53,12 @@ static char	**ft_new_env(char **input, char **env)
 	while (env[len])
 		len++;
 	if ((new_env = (char **)malloc(sizeof(char *) * len)) == NULL)
-	{
-		ft_printf("minishell: cannot allocate memory.\n");
-		exit(-1);
-	}
-	i = 0;
+		ft_error_exit("minishell: cannot allocate memory.\n");
+	i = -1;
 	n = 0;
-	while (env[i])
-	{
+	while (env[++i])
 		if (ft_strncmp(env[i], search, search_len) != 0)
-		{
-			new_env[n] = ft_strdup(env[i]);
-			n++;
-		}
-		i++;
-	}
+			new_env[n++] = ft_strdup(env[i]);
 	new_env[len - 1] = NULL;
 	ft_strdel(&search);
 	if (input[1] == NULL)
