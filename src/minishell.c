@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/03 17:32:36 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/03 18:20:06 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,36 +41,29 @@ static void	ft_exec_search_in_path(int i, char **input, char **env,
 
 static char	**ft_new_env(char **input, char **env)
 {
-	char	**new_env;
-	char	*search;
-	int		search_len;
-	int		len;
-	int		i;
-	int		n;
+	t_new_env n;
 
-	search_len = ft_strlen((search = ft_strjoin_free(ft_strdup(input[0]), ft_strdup("="))));
-	len = 0;
-	while (env[len])
-		len++;
-	if ((new_env = (char **)malloc(sizeof(char *) * len)) == NULL)
+	n = (t_new_env){.len = 0, .n = 0, .i = -1, .new_env = NULL, .search = NULL};
+	n.search_len = ft_strlen((n.search = ft_strjoin_free(ft_strdup(input[0]),
+		ft_strdup("="))));
+	while (env[n.len])
+		n.len++;
+	if ((n.new_env = (char **)malloc(sizeof(char *) * n.len)) == NULL)
 		ft_error_exit("minishell: cannot allocate memory.\n");
-	i = -1;
-	n = 0;
-	while (env[++i])
-		if (ft_strncmp(env[i], search, search_len) != 0)
-			new_env[n++] = ft_strdup(env[i]);
-	new_env[len - 1] = NULL;
-	ft_strdel(&search);
+	while (env[++n.i])
+		if (ft_strncmp(env[n.i], n.search, n.search_len) != 0)
+			n.new_env[n.n++] = ft_strdup(env[n.i]);
+	n.new_env[n.len - 1] = NULL;
+	ft_strdel(&n.search);
 	if (input[1] == NULL)
 	{
-		ft_print_env(new_env);
-		i = 0;
-		while (new_env[i])
-			ft_strdel(new_env + i++);
-		free(new_env);
-		new_env = NULL;
+		ft_print_env(n.new_env);
+		n.i = 0;
+		while (n.new_env[n.i])
+			ft_strdel(n.new_env + n.i++);
+		ft_memdel((void **)&n.new_env);
 	}
-	return (new_env);
+	return (n.new_env);
 }
 
 static void	ft_find_and_exec_bin(char mode, char **input, char ***env)
