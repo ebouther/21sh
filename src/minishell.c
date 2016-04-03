@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/03 15:10:14 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/03 15:19:16 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,8 +94,11 @@ static void	ft_find_and_exec_bin(char mode, char **input, char ***env)
 		ft_strdel(input + 1);
 		input += 2;
 		new_env = (mode == 'i') ? NULL : ft_new_env(input, *env);
-		ft_strdel(input);
-		input++;
+		if (mode == 'u')
+		{
+			ft_strdel(input);
+			input++;
+		}
 	}
 	if (input[0])
 	{
