@@ -6,13 +6,13 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/02 18:36:51 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/03 14:52:38 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	ft_exec_search_in_path(int i, char **input, char **env)
+static void	ft_exec_search_in_path(int i, char **input, char **env, char **execve_env)
 {
 	char	**split;
 	char	*path;
@@ -27,7 +27,7 @@ static void	ft_exec_search_in_path(int i, char **input, char **env)
 	{
 		if (access(path = ft_strjoin_free(ft_strdup(split[i]), ft_strjoin_free(
 						ft_strdup("/"), ft_strdup(input[0]))), X_OK) == 0
-				&& execve(path, input, env) == -1)
+				&& execve(path, input, execve_env) == -1)
 			ft_printf("minishell: execve: cannot be executed.\n");
 		ft_strdel(&path);
 		i++;
@@ -62,20 +62,22 @@ static char	**ft_new_env(char **input, char **env)
 	{
 		if (ft_strncmp(env[i], search, search_len) != 0)
 		{
-			ft_printf("ENV: '%s'\n", env[i]);
 			new_env[n] = ft_strdup(env[i]);
 			n++;
 		}
 		i++;
 	}
-	new_env[i] = NULL;
+	new_env[len - 1] = NULL;
 	ft_strdel(&search);
 	if (input[1] == NULL)
-		ft_print_env(new_env); // Should free in dat case
-
-		ft_strdel(input);
-		input++;
-
+	{
+		ft_print_env(new_env);
+		i = 0;
+		while (new_env[i])
+			ft_strdel(new_env + i++);
+		free(new_env);
+		new_env = NULL;
+	}
 	return (new_env);
 }
 
@@ -92,10 +94,11 @@ static void	ft_find_and_exec_bin(char mode, char **input, char ***env)
 		ft_strdel(input + 1);
 		input += 2;
 		new_env = (mode == 'i') ? NULL : ft_new_env(input, *env);
+		input++;
 	}
 	if (execve(input[0], input, new_env) == -1
 			&& (i = ft_get_in_env("PATH=", *env)) != -1)
-		ft_exec_search_in_path(i, input, new_env);
+		ft_exec_search_in_path(i, input, *env, new_env);
 	n = 0;
 	ft_printf("minishell: command not found:");
 	while (input[n])
