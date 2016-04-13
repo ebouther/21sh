@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:39:03 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/03 18:20:06 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/13 21:38:50 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,15 @@
 #include <stdio.h>
 #include <signal.h>
 #include "libft.h"
+
+typedef struct s_main
+{
+	pid_t	pid;
+	char	**input;
+	int		i;
+	char	mode;
+}				t_main;
+
 
 typedef struct s_input
 {
@@ -71,6 +80,7 @@ void		ft_change_directory(char **arg, char ***env);
 /*
 ** env.c
 */
+char		**ft_env_command(char *mode, int len, char **arg, char ***env);
 int			ft_get_in_env(char *search, char **env);
 void		ft_parse_args_for_env_var(char ***arg, char ***env);
 

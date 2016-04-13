@@ -6,11 +6,51 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 19:28:25 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/13 20:36:08 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/13 21:14:53 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static int	get_env_command_flags(char *mode, char **arg)
+{
+	if (ft_strcmp(arg[1], "-") == 0
+			|| ft_strcmp(arg[1], "--ignore-environment") == 0
+			|| ft_strcmp(arg[1], "-i") == 0)
+	{
+		*mode = 'i';
+		if (arg[2] == NULL)
+			return (-1);
+	}
+	else if ((ft_strcmp(arg[1], "-u") == 0
+			|| ft_strcmp(arg[1], "--unset") == 0)
+			&& arg[2] != NULL)
+		*mode = 'u';
+	else
+	{
+		ft_printf("env: illegal option -- %s\n \
+usage: env [[-, -i, --ignore-environment] [-u name, --unset name]] \
+[command [args...]]\n", arg[1]);
+		return (-1);
+	}
+	return (0);
+}
+
+char		**ft_env_command(char *mode, int len, char **arg, char ***env)
+{
+	if (len > 1)
+	{
+		if (arg[1][0] == '-'
+			&& get_env_command_flags(mode, arg) == -1)
+			return (NULL);
+		return (arg);
+	}
+	else if (len == 1)
+		ft_print_env(*env);
+	else
+		ft_printf("minishell: env: %s: No such file or directory.\n", arg[1]);
+	return (NULL);
+}
 
 int			ft_get_in_env(char *search, char **env)
 {

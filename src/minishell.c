@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/03 18:20:06 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/13 21:41:17 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,8 @@ static char	**ft_new_env(char **input, char **env)
 	t_new_env n;
 
 	n = (t_new_env){.len = 0, .n = 0, .i = -1, .new_env = NULL, .search = NULL};
-	n.search_len = ft_strlen((n.search = ft_strjoin_free(ft_strdup(input[0]),
+	n.search_len = ft_strlen(
+			(n.search = ft_strjoin_free(ft_strdup(input[0]),
 		ft_strdup("="))));
 	while (env[n.len])
 		n.len++;
@@ -66,6 +67,23 @@ static char	**ft_new_env(char **input, char **env)
 	return (n.new_env);
 }
 
+static void	ft_exec_with_modified_env(char mode, char ***input,
+										char ***env, char ***new_env)
+{
+	if (mode == 'i' || mode == 'u')
+	{
+		ft_strdel(*input);
+		ft_strdel(*input + 1);
+		(*input) += 2;
+		*new_env = (mode == 'i') ? NULL : ft_new_env(*input, *env);
+		if (mode == 'u')
+		{
+			ft_strdel(*input);
+			(*input)++;
+		}
+	}
+}
+
 static void	ft_find_and_exec_bin(char mode, char **input, char ***env)
 {
 	int		n;
@@ -73,18 +91,7 @@ static void	ft_find_and_exec_bin(char mode, char **input, char ***env)
 	char	**new_env;
 
 	new_env = *env;
-	if (mode == 'i' || mode == 'u')
-	{
-		ft_strdel(input);
-		ft_strdel(input + 1);
-		input += 2;
-		new_env = (mode == 'i') ? NULL : ft_new_env(input, *env);
-		if (mode == 'u')
-		{
-			ft_strdel(input);
-			input++;
-		}
-	}
+	ft_exec_with_modified_env(mode, &input, env, &new_env);
 	if (input[0])
 	{
 		if (execve(input[0], input, new_env) == -1
@@ -104,30 +111,27 @@ static void	ft_find_and_exec_bin(char mode, char **input, char ***env)
 
 int			main(int ac, char **av, char **env)
 {
-	pid_t	pid;
-	char	**input;
-	int		i;
-	char	mode;
+	t_main	m;
 
 	(void)ac;
 	(void)av;
-	pid = -1;
+	m.pid = -1;
 	while (42)
 	{
-		mode = 0;
+		m.mode = 0;
 		ft_printf("$> ");
-		if ((input = ft_get_user_input(&mode, &env)) != NULL)
-			pid = fork();
-		if (pid == 0)
-			ft_find_and_exec_bin(mode, input, &env);
-		else if (pid > 0)
+		if ((m.input = ft_get_user_input(&m.mode, &env)) != NULL)
+			m.pid = fork();
+		if (m.pid == 0)
+			ft_find_and_exec_bin(m.mode, m.input, &env);
+		else if (m.pid > 0)
 			wait(NULL);
-		if (input != NULL && (i = 0) == 0)
+		if (m.input != NULL && (m.i = 0) == 0)
 		{
-			while (input[i])
-				ft_strdel(input + i++);
-			free((void *)input);
-			input = NULL;
+			while (m.input[m.i])
+				ft_strdel(m.input + m.i++);
+			free((void *)m.input);
+			m.input = NULL;
 		}
 	}
 	return (0);
