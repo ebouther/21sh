@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 19:28:25 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/03 18:16:28 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/13 20:22:18 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,7 @@ void	ft_parse_args_for_env_var(char ***arg, char ***env)
 	while ((*arg)[i])
 	{
 		len = 0;
-		if ((*arg)[i][0] == '$'
-			&& !(i == 1 && ft_strcmp((*arg)[0], "setenv") == 0))
+		if ((*arg)[i][0] == '$')
 		{
 			len = ft_strlen((*arg)[i]);
 			if ((pos = ft_get_in_env(
