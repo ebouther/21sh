@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 19:28:25 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/17 16:42:55 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/17 22:50:13 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ void		ft_parse_args_for_env_var(char ***arg, char ***env)
 				ft_strdel(&tmp);
 			}
 			else
-				printf("minishell: set $HOME environment \
+				ft_printf("minishell: set $HOME environment \
 variable before using ~\n");
 		}
 		i++;
