@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 19:35:00 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/13 20:54:30 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/17 16:39:28 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ static char	**ft_switch_builtin_command(char *mode, int len, char **arg,
 		else if (len > 1)
 		{
 			if (ft_isalpha(arg[1][0]) == 0)
-				ft_printf("minishell: setenv: Variable name must begin \
-with a letter.\n");
+				ft_printf("minishell: setenv: %s",
+					"Variable name must begin with a letter.\n");
 			else
 				ft_modify_env(arg, env, 1);
 		}

@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 19:28:25 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/13 21:14:53 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/17 16:42:55 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ static int	get_env_command_flags(char *mode, char **arg)
 		*mode = 'u';
 	else
 	{
-		ft_printf("env: illegal option -- %s\n \
-usage: env [[-, -i, --ignore-environment] [-u name, --unset name]] \
-[command [args...]]\n", arg[1]);
+		ft_printf("env: illegal option -- %s\n usage: env [[-, -i, %s",
+		"--ignore-environment] [-u name, --unset name]] [command [args...]]\n",
+			arg[1]);
 		return (-1);
 	}
 	return (0);
