@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/13 21:41:17 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/18 22:17:49 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ static void	ft_exec_with_modified_env(char mode, char ***input,
 	}
 }
 
-static void	ft_find_and_exec_bin(char mode, char **input, char ***env)
+void		ft_find_and_exec_bin(char mode, char **input, char ***env)
 {
 	int		n;
 	int		i;
@@ -123,7 +123,11 @@ int			main(int ac, char **av, char **env)
 		if ((m.input = ft_get_user_input(&m.mode, &env)) != NULL)
 			m.pid = fork();
 		if (m.pid == 0)
-			ft_find_and_exec_bin(m.mode, m.input, &env);
+		{
+			//ft_parse_args_for_redirections(); // (higher precedence than pipes)
+			if (ft_parse_args_for_pipe(m.mode, &m.input, &env) != 1)
+				ft_find_and_exec_bin(m.mode, m.input, &env);
+		}
 		else if (m.pid > 0)
 			wait(NULL);
 		if (m.input != NULL && (m.i = 0) == 0)

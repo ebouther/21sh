@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:39:03 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/13 21:44:09 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/18 22:18:24 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,9 @@
 # include <stdio.h>
 # include <signal.h>
 # include "libft.h"
+
+# define READ_END 0
+# define WRITE_END 1
 
 typedef struct	s_main
 {
@@ -64,6 +67,11 @@ typedef struct	s_setenv
 }				t_setenv;
 
 /*
+** minishell.c
+*/
+void			ft_find_and_exec_bin(char mode, char **input, char ***env);
+
+/*
 ** builtin.c
 */
 void			ft_modify_env(char **arg, char ***env, int mode);
@@ -87,5 +95,10 @@ void			ft_parse_args_for_env_var(char ***arg, char ***env);
 ** input.c
 */
 char			**ft_get_user_input(char *mode, char ***env);
+
+/*
+** redirections.c
+*/
+int				ft_parse_args_for_pipe(int mode, char ***arg, char ***env);
 
 #endif

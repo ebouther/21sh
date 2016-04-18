@@ -1,4 +1,4 @@
-NAME := minishell
+NAME = 21sh
 
 RED_L = \033[1;31m
 GREEN_L = \033[1;32m
@@ -27,7 +27,8 @@ SRC_FILES =	minishell.c \
 			builtin.c \
 			browser.c \
 			env.c \
-			input.c
+			input.c \
+			redirections.c
 
 OBJ_FILES = $(SRC_FILES:.c=.o)
 INC_FILES = minishell.h
