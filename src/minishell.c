@@ -6,7 +6,7 @@
 /*   By: ebouther <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/28 17:37:30 by ebouther          #+#    #+#             */
-/*   Updated: 2016/04/18 22:17:49 by ebouther         ###   ########.fr       */
+/*   Updated: 2016/04/18 22:38:30 by ebouther         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,8 +124,8 @@ int			main(int ac, char **av, char **env)
 			m.pid = fork();
 		if (m.pid == 0)
 		{
-			//ft_parse_args_for_redirections(); // (higher precedence than pipes)
-			if (ft_parse_args_for_pipe(m.mode, &m.input, &env) != 1)
+			if (ft_parse_args_for_pipe(m.mode, &m.input, &env) != 1
+			&& ft_parse_args_for_redirections(m.mode, &m.input, &env) != 1)
 				ft_find_and_exec_bin(m.mode, m.input, &env);
 		}
 		else if (m.pid > 0)
